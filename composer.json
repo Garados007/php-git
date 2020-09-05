@@ -1,0 +1,12 @@
+{
+    "name": "garados007/php-git",
+    "description": "A git client implemented in php. The purpose for this is to have basic git functionality on system without git installed.",
+    "require": {
+        "php": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpGit\\": "src/"
+        }
+    }
+}
