@@ -29,3 +29,4 @@ The following commands are implemented:
 
 The following core components are implemented:
 - git blob objects
+- git index

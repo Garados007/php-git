@@ -18,7 +18,7 @@ abstract class ObjectBase {
     }
 
     public function getHash(): string {
-        return $hash;
+        return $this->hash;
     }
 
     public function setRawContent(string $content): self {
