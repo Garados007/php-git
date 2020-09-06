@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use PhpGit\Internals\Index\IndexEntry;
 use PhpGit\Internals\Index\UnknownExt;
+use PhpGit\Internals\Index\ExtBase;
 
 class GitIndex {
     private $version = 2;
@@ -20,10 +21,46 @@ class GitIndex {
         return $this;
     }
 
+    public function getEntryCount(): int {
+        return count($this->entries);
+    }
+
     public function getEntry(int $index): ?IndexEntry {
         if ($index < 0 || $index >= count($this->entries))
             return null;
         return $this->entries[$index];
+    }
+
+    public function addEntry(IndexEntry $entry): self {
+        $this->entries[] = $entry;
+        return $this;
+    }
+
+    public function removeEntry(int $index): self {
+        if ($index >= 0 && $index < count($this->entries))
+            \array_splice($this->entries, $index, 1);
+        return $this;
+    }
+
+    public function getExtensionCount(): int {
+        return count($this->extensions);
+    }
+
+    public function getExtension(int $index): ?ExtBase {
+        if ($index < 0 || $index >= count($this->extensions))
+            return null;
+        return $this->extensions[$index];
+    }
+
+    public function addExtension(ExtBase $extension): self {
+        $this->extensions []= $extension;
+        return $this;
+    }
+
+    public function removeExtension(int $index): self {
+        if ($index >= 0 || $index < count($this->extensions))
+            \array_splice($this->extensions, $index, 1);
+        return $this;
     }
 
     private static function getData(string $data, string $format, int $index) {
