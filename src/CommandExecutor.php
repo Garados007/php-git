@@ -5,6 +5,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use PhpGit\Internals\Commands\HashObject;
 use PhpGit\Internals\Commands\Init;
 use PhpGit\Internals\Commands\CatFile;
+use PhpGit\Internals\Commands\UpdateIndex;
+use function \substr;
 
 class CommandExecutor {
 
@@ -81,5 +83,60 @@ class CommandExecutor {
             }
         }
         $cmd->run();
+    }
+
+    private function update_index(array $args, string $in) {
+        $cmd = new UpdateIndex();
+        $noArgs = false;
+        $matches = [];
+        for ($i = 0; $i < count($args); ++$i) {
+            if ($noArgs) {
+                $cmd->addFile($args[$i]);
+            }
+            elseif ($args[$i] == '--add') {
+                $cmd->doAdd();
+            }
+            elseif ($args[$i] == '--remove') {
+                $cmd->doRemove();
+            }
+            elseif ($args[$i] == '--refresh') {
+                $cmd->doRefresh();
+            }
+            elseif (\preg_match('/^--chmod=(\+|\-)x$/', $args[$i], $matches)) {
+                $cmd->setChmod($matches[1] == '+');
+            }
+            elseif ($args[$i] == '--assume-unchanged') {
+                $cmd->doAssumeUnchanged(true);
+            }
+            elseif ($args[$i] == '--no-assume-unchanged') {
+                $cmd->doAssumeUnchanged(false);
+            }
+            elseif ($args[$i] == '--really-refresh') {
+                $cmd->doReallyRefresh();
+            }
+            elseif ($args[$i] == '--force-remove') {
+                $cmd->doRemove()->forceRemove();
+            }
+            elseif ($args[$i] == '--stdin') {
+                $cmd->readFromStdin();
+            }
+            elseif ($args[$i] == '--index-version' && $i < count($args) - 1) {
+                $cmd->setIndexVersion(intval($args[++$i]));
+            }
+            elseif ($args[$i] == '-z') {
+                $cmd->useZeroDelimiter();
+            }
+            elseif ($args[$i] == '--') {
+                $noArgs = true;
+            }
+            elseif (\substr($args[$i], 0, 1) !== '-') {
+                $cmd->addFile($args[$i]);
+            }
+            else {
+                echo "unknown args {$args[$i]}";
+                return;
+            }
+        }
+        $cmd->setIn($in)->run();
     }
 }

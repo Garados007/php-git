@@ -45,7 +45,11 @@ abstract class ObjectBase {
         if (!\is_dir(self::getPathDir($this->hash)))
             \mkdir(self::getPathDir($this->hash));
         $compressed = \gzcompress($this->getFullFileContent());
-        \file_put_contents(self::getPath($this->hash), $compressed);
+        $path = self::getPath($this->hash);
+        if (\is_file($path))
+            \chmod($path, 0644);
+        \file_put_contents($path, $compressed);
+        \chmod($path, 0444);
     }
 
     protected abstract function verify(): bool;

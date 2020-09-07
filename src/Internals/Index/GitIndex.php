@@ -31,14 +31,29 @@ class GitIndex {
         return $this->entries[$index];
     }
 
+    public function getEntryByPath(string $path): ?IndexEntry {
+        foreach ($this->entries as $entry)
+            if ($entry->getPathName() == $path)
+                return $entry;
+        return null;
+    }
+
     public function addEntry(IndexEntry $entry): self {
         $this->entries[] = $entry;
         return $this;
     }
 
-    public function removeEntry(int $index): self {
+    public function removeEntryAt(int $index): self {
         if ($index >= 0 && $index < count($this->entries))
             \array_splice($this->entries, $index, 1);
+        return $this;
+    }
+
+    public function removeEntry(IndexEntry $entry): self {
+        foreach ($this->entries as $index => $value) {
+            if ($entry->getPathName() == $value->getPathName())
+                return $this->removeEntryAt($index);
+        }
         return $this;
     }
 

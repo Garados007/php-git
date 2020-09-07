@@ -53,6 +53,11 @@ class IndexEntry {
         return $this->mode & 0x1ff;
     }
 
+    public function setUnixPermission(int $mode): self {
+        $this->mode = ($this->mode & ~0x1ff) | ($mode & 0x1ff);
+        return $this;
+    }
+
     public function getUid(): int {
         return $this->uid;
     }
@@ -69,12 +74,23 @@ class IndexEntry {
         return $this->hash;
     }
 
+    public function setHash(string $hash): self {
+        $this->hash = $hash;
+        return $this;
+    }
+
     public function isAssumeValid(): bool {
-        return ($this->flags & 0x80) != 0;
+        return ($this->flags & 0x8000) != 0;
+    }
+
+    public function setAssumeValid(bool $set): self {
+        $this->flags = $set ?
+            $this->flags | 0x8000 :
+            $this->flags & 0x7fff;
     }
 
     public function isExtended(): bool {
-        return ($this->flags & 0x40) != 0;
+        return ($this->flags & 0x4000) != 0;
     }
 
     public function getStage(): int {
@@ -97,7 +113,7 @@ class IndexEntry {
         return $this->pathName;
     }
 
-    public function copyInfoFromFile(string $filePath, string $hash): self {
+    public function copyInfoFromFile(string $filePath): self {
         \clearstatcache();
         $stat = \stat($filePath);
         if ($stat === false)
@@ -118,11 +134,25 @@ class IndexEntry {
         $this->uid = $stat['uid'];
         $this->gid = $stat['gid'];
         $this->fileSize = $stat['size'];
-        $this->hash = $hash;
         $this->flags = \min(\strlen($filePath), 0x0fff) & 0x0fff;
         $this->exFlags = 0;
         $this->pathName = $filePath;
         return $this;
+    }
+
+    public function sameStat(IndexEntry $entry): bool {
+        return
+            $this->ctimeSeconds === $entry->ctimeSeconds &&
+            $this->ctimeNano === $entry->ctimeNano &&
+            $this->mtimeSeconds === $entry->mtimeSeconds &&
+            $this->mtimeNano === $entry->mtimeNano &&
+            $this->dev === $entry->dev &&
+            $this->ino === $entry->ino &&
+            $this->mode === $entry->mode &&
+            $this->uid === $entry->uid &&
+            $this->gid === $entry->gid &&
+            $this->fileSize === $entry->fileSize &&
+            $this->pathName === $entry->pathName;
     }
 
     private static function getData(string $data, string $format, int $index) {

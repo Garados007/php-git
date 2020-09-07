@@ -26,6 +26,7 @@ The following commands are implemented:
 - `git init`
 - `git cat-file`
 - `git hash-object`
+- `git update-index`
 
 The following core components are implemented:
 - git blob objects
