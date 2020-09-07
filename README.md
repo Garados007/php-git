@@ -23,11 +23,12 @@ Some goals for the future:
 For the first step I want to implement the git internal functions and the "git core". For this php-git needs to understand what git does with the files inside the `.git` folder and how to reproduce this.
 
 The following commands are implemented:
-- `git init`
 - `git cat-file`
 - `git hash-object`
+- `git init`
 - `git update-index`
+- `git write-tree`
 
 The following core components are implemented:
-- git blob objects
+- git objects: blob, tree
 - git index

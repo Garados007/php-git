@@ -52,7 +52,7 @@ class CatFile extends PhpCommandBase {
         }
 
         if ($this->printContent) {
-            echo $obj->getRawContent();
+            echo $obj->pretty();
             return true;
         }
         if ($this->printSize) {

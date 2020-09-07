@@ -6,6 +6,7 @@ use PhpGit\Internals\Commands\HashObject;
 use PhpGit\Internals\Commands\Init;
 use PhpGit\Internals\Commands\CatFile;
 use PhpGit\Internals\Commands\UpdateIndex;
+use PhpGit\Internals\Commands\WriteTree;
 use function \substr;
 
 class CommandExecutor {
@@ -43,7 +44,7 @@ class CommandExecutor {
                 $cmd->fromFile($args[$i]);
             }
             else {
-                echo "unknown args {$args[$i]}";
+                echo "error: unknown option `{$args[$i]}'" . PHP_EOL;
                 return;
             }
         }
@@ -78,7 +79,7 @@ class CommandExecutor {
                 $hasPrint = true;
             }
             else {
-                echo "unknown args {$args[$i]}";
+                echo "error: unknown option `{$args[$i]}'" . PHP_EOL;
                 return;
             }
         }
@@ -160,10 +161,25 @@ class CommandExecutor {
                 $cmd->addFile($args[$i]);
             }
             else {
-                echo "unknown args {$args[$i]}";
+                echo "error: unknown option `{$args[$i]}'" . PHP_EOL;
                 return;
             }
         }
         $cmd->setIn($in)->run();
+    }
+
+    private function write_tree(array $args, string $in) {
+        $cmd = new WriteTree();
+        $matches = [];
+        for ($i = 0; $i < count($args); ++$i) {
+            if (\preg_match('/--prefix=(.*)/', $args[$i], $matches)) {
+                $cmd->setPrefix($matches[1]);
+            }
+            else {
+                echo "error: unknown option `{$args[$i]}'" . PHP_EOL;
+                return;
+            }
+        }
+        $cmd->run();
     }
 }

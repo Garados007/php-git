@@ -9,6 +9,8 @@ abstract class ObjectBase {
     
     public abstract function getType(): string;
 
+    public abstract function pretty(): string;
+
     public function getSize(): int {
         return $this->size;
     }
@@ -25,6 +27,7 @@ abstract class ObjectBase {
         $this->content = $content;
         $this->size = \mb_strlen($content, '8bit');
         $this->hash = \sha1($this->getFullFileContent());
+        $this->verify();
         return $this;
     }
 
@@ -77,6 +80,8 @@ abstract class ObjectBase {
         switch ($type) {
             case 'blob':
                 return new BlobObject();
+            case 'tree':
+                return new TreeObject();
             default: return null;
         }
     }

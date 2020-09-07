@@ -9,6 +9,10 @@ class BlobObject extends ObjectBase {
         return 'blob';
     }
 
+    public function pretty(): string {
+        return $this->getRawContent();
+    }
+
     public function getContent(): string {
         return $this->getRawContent();
     }

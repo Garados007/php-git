@@ -291,4 +291,3 @@ class UpdateIndex extends PhpCommandBase {
         return true;
     }
 }
- 
