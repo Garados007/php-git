@@ -68,4 +68,12 @@ class Utils {
         else $result []= 0;
         return $result;
     }
+
+    public static function getCurrentTime(): array {
+        $list = \explode(' ', \microtime());
+        return [
+            \intval($list[1]),
+            \intval(\round(\floatval($list[0]) * 1e9))
+        ];
+    }
 }

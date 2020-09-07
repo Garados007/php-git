@@ -102,6 +102,26 @@ class CommandExecutor {
             elseif ($args[$i] == '--refresh') {
                 $cmd->doRefresh();
             }
+            elseif ($args[$i] == '--cacheinfo' && $i < count($args) - 1) {
+                $arg = $args[++$i];
+                if (\preg_match('/^(\d+),([0-9a-fA-F]{40}),(.*)$/', $arg, $matches)) {
+                    $cmd->addCacheInfo(octdec($matches[1]), $matches[2], $matches[3]);
+                }
+                elseif (\preg_match('/^\d+$/', $arg) && $i < count($args) - 1) {
+                    $cmd->addCacheInfo(octdec($arg), $args[$i], $args[++$i]);
+                }
+                else {
+                    echo 'invalid args for --cacheinfo' . PHP_EOL;
+                    return false;
+                }
+            }
+            elseif ($args[$i] == '--index-info') {
+                if ($i + 1 !== count($args)) {
+                    echo 'error: option \'index-info\' must be the last argument' . PHP_EOL;
+                    return false;
+                }
+                $cmd->readFromStdin();
+            }
             elseif (\preg_match('/^--chmod=(\+|\-)x$/', $args[$i], $matches)) {
                 $cmd->setChmod($matches[1] == '+');
             }
@@ -114,10 +134,17 @@ class CommandExecutor {
             elseif ($args[$i] == '--really-refresh') {
                 $cmd->doReallyRefresh();
             }
+            elseif ($args[$i] == '--info-only') {
+                $cmd->doInfoOnly();
+            }
             elseif ($args[$i] == '--force-remove') {
                 $cmd->doRemove()->forceRemove();
             }
             elseif ($args[$i] == '--stdin') {
+                if ($i + 1 !== count($args)) {
+                    echo 'error: option \'stdin\' must be the last argument' . PHP_EOL;
+                    return false;
+                }
                 $cmd->readFromStdin();
             }
             elseif ($args[$i] == '--index-version' && $i < count($args) - 1) {

@@ -45,6 +45,10 @@ class IndexEntry {
         return $this->ino;
     }
 
+    public function getMode(): int {
+        return $this->mode;
+    }
+
     public function getObjectType(): int {
         return ($this->mode >> 12) & 0x0f;
     }
@@ -97,6 +101,11 @@ class IndexEntry {
         return ($this->flags >> 12) & 0x03;
     }
 
+    public function setStage(int $stage): self {
+        $this->flags = ($this->flags & 0xcfff) | (($stage & 0x03) << 12);
+        return $this;
+    }
+
     public function getNameLength(): int {
         return $this->flags & 0x0fff;
     }
@@ -137,6 +146,23 @@ class IndexEntry {
         $this->flags = \min(\strlen($filePath), 0x0fff) & 0x0fff;
         $this->exFlags = 0;
         $this->pathName = $filePath;
+        return $this;
+    }
+
+    public function copyInfoFromCacheInfo(int $mode, string $path): self {
+        $this->ctimeSeconds = 0;
+        $this->ctimeNano = 0;
+        $this->mtimeSeconds = 0;
+        $this->mtimeNano = 0;
+        $this->dev = 0;
+        $this->ino = 0;
+        $this->mode = $mode & ~0x0012;
+        $this->uid = 0;
+        $this->gid = 0;
+        $this->fileSize = 0;
+        $this->flags = \min(\strlen($path), 0x0fff) & 0x0fff;
+        $this->exFlags = 0;
+        $this->pathName = $path;
         return $this;
     }
 
