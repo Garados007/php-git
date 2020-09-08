@@ -45,7 +45,6 @@ class WriteTree extends PhpCommandBase {
                 $hash = $this->execBucket($b);
                 $list []= new TreeEntry(
                     0x4000,
-                    'tree',
                     $hash,
                     $key
                 );
@@ -54,7 +53,6 @@ class WriteTree extends PhpCommandBase {
             foreach ($bucket['list'] as $key => $entry) {
                 $list []= new TreeEntry(
                     $entry->getMode(),
-                    'blob',
                     $entry->getHash(),
                     $key
                 );
